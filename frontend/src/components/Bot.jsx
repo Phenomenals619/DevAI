@@ -18,22 +18,25 @@ function Bot() {
             return
         }
         try {
-            // Simulating API call - replace with actual endpoint
-            setTimeout(() => {
-                const userMsg = input
-                const botMsg = "I'm DevAI, here to help you with your development questions and ideas!"
+            const userMsg = input
+            const res = await fetch("https://devai-backend.onrender.com/bot/v1/message", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ text: userMsg })
+            })
+            if (res.ok) {
+                const data = await res.json()
                 setMessages([
                     ...messages,
-                    { text: userMsg, sender: 'user' },
-                    { text: botMsg, sender: 'bot' }
+                    { text: data.userMessage, sender: 'user' },
+                    { text: data.botMessage, sender: 'bot' }
                 ])
                 setInput("")
-                setLoading(false)
-            }, 500)
+            }
         } catch (error) {
             console.log("Error sending message:", error)
-            setLoading(false)
         }
+        setLoading(false)
     }
 
     const handleKeyPress = (e) => {
